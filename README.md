@@ -1,4 +1,4 @@
-# Aestesis (flutter_aestesis)
+# Aestesis (aestesis_app)
 
 Aestesis is a professional desktop application designed for **VJing** and live visual performance. Built with Flutter, it serves as the user interface and orchestration layer for building real-time visual compositions. 
 
