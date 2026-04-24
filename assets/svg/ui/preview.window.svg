@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 800 800" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;">
+    <path d="M333.333,733.333C207.625,733.333 144.772,733.333 105.719,694.28C66.667,655.23 66.667,592.373 66.667,466.667" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:50px;"/>
+    <path d="M333.333,66.667C207.625,66.667 144.772,66.667 105.719,105.719C97.646,113.792 91.242,122.882 86.162,133.333M66.667,333.333C66.667,308.817 66.667,286.691 66.956,266.667" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:50px;"/>
+    <path d="M466.667,66.667C592.373,66.667 655.23,66.667 694.28,105.719C733.333,144.772 733.333,207.625 733.333,333.333" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:50px;"/>
+    <path d="M466.667,733.333C592.373,733.333 655.23,733.333 694.28,694.28C702.353,686.207 708.757,677.12 713.837,666.667M733.333,466.667C733.333,491.183 733.333,513.31 733.043,533.333" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:50px;"/>
+</svg>

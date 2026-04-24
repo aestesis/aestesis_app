@@ -1,0 +1,51 @@
+name: aestesis
+description: "Aestesis live visul app"
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+repositary: https://github.com/aestesis/aestesis_app.git
+
+environment:
+  sdk: ">=3.10.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  bb_dart:
+    git: https://github.com/aestesis/bb.dart.git
+  bb.flutter:
+    git: https://github.com/aestesis/bb.flutter.git
+  aestesis_engine:
+    git: https://github.com/aestesis/aestesis_engine.git
+  midi_io:
+    git:
+      url: https://github.com/aestesis/flutter_midi.git
+      path: midi_io
+
+  collection: any
+  window_manager: any
+  shared_preferences: any
+  flutter_portal: any
+  flutter_svg: any
+  package_info_plus: any
+  line_icons: any
+  url_launcher: any
+  event_bus: any
+  desktop_drop: any
+  file_picker: any
+  reorderable_grid: any
+  path: any
+  open_file_macos: any
+  uuid: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  config:
+    enable-swift-package-manager: true
+
+  uses-material-design: true
