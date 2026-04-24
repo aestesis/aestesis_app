@@ -6,7 +6,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: f52b8a81ebc7b8ecf132f27036ac676c5d0156f8
+      resolved-ref: "83a8bde2e9af23a4d52b63e036dc5028f586f5df"
       url: "https://github.com/aestesis/aestesis_engine.git"
     source: git
     version: "1.0.5"
