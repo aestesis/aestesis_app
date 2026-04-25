@@ -71,7 +71,7 @@ Aestesis allows artists to:
 | `Player` | MV4/MP4/MOV/3GP media playback with controls |
 | `FX`     | Video filters and visual effects             |
 | `LUT`    | Color grading with LUT support               |
-| `Shader` | Real-time GLSL shader execution              |
+| `Shader` | Real-time Metal Shader execution              |
 | `Analog` | Analog-inspired Mixer                        |
 | `Syn`    | Audio-reactive synthesizer visuals           |
 | `Camera` | Virtual/external camera input routing        |
