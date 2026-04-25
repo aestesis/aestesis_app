@@ -1,4 +1,5 @@
-# Aestesis (aestesis_app)
+# Aestesis
+Live visual performance Application (Mac OS)
 
 <div align="center">
 
@@ -55,12 +56,12 @@ Aestesis allows artists to:
 - ✅ **Modular Architecture** - Add/remove modules at runtime
 - ✅ **MIDI Integration** - Map hardware controllers (knobs, buttons, faders)
 - ✅ **Asset Management** - Drag & drop video files (.mp4, .mov, .mv4, etc.)
-- ✅ **Real-time Effects** - GLSL shaders, LUTs, video filters
+- ✅ **Real-time Effects** - Shaders, LUTs, video filters
 - ✅ **Multi-module Pipeline** - Chain multiple modules in a composition
 - ✅ **Composition System** - Save/load custom setups (.aes)
 - ✅ **Theme Support** - Light/dark mode switching
 - ✅ **Platform Support** - macOS
-- ✅ **Audio Visualization** - Real-time audio level meters
+- ✅ **Audio Visualization** - Real-time audio effects
 - ✅ **Camera Routing** - Virtual/external camera support
 
 ### Visual Modules
