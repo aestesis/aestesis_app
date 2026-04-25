@@ -41,6 +41,8 @@ Live visual performance Application (Mac OS)
 
 **Aestesis** is a professional desktop application designed for [VJing](https://en.wikipedia.org/wiki/VJing) and live visual performance. Built with Flutter, it serves as the user interface and orchestration layer for building real-time visual compositions.
 
+**Aestesis** is still in its early development stages.
+
 Aestesis allows artists to:
 - 🎥 Manage video and audio assets
 - ✨ Apply real-time effects via modular nodes
