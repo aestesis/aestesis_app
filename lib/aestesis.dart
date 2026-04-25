@@ -24,12 +24,11 @@ final Aestesis aes = Aestesis();
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 class Aestesis {
-  final aestesisUrl = 'https://aestesis.net';
+  final aestesisUrl = 'https://aestesis.org';
   final wikipediaVJ = 'https://en.wikipedia.org/wiki/VJing';
-  final feedback = 'https://aestesis.net';
+  final feedback = 'https://aestesis.org';
   final contactUs = 'mailto:renan@aestesis.org';
   final discord = 'https://discord.gg/fnWEmvU6qY';
-  final twitch = 'https://www.twitch.tv/aestesis';
   final bluesky = 'https://bsky.app/profile/aestesis.bsky.social';
   final alib = AestesisEngine();
   late final message = alib.message;
