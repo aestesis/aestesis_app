@@ -32,7 +32,10 @@ dependencies:
   url_launcher: any
   event_bus: any
   desktop_drop: any
-  file_picker: any
+  file_picker:
+    git:
+      url: https://github.com/renanyoy/flutter_file_picker.git
+      path: packages/file_picker
   reorderable_grid: any
   path: any
   open_file_macos: any
