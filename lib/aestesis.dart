@@ -196,27 +196,26 @@ class Aestesis {
             compositionFile.value = null;
           case MenuSelection.openComposition:
             final r = this['composition.files.directory'];
-            //final directory = r != null ? r['path'] : null;
-            final result = await picker.FilePicker.platform.pickFiles(
+            final directory = r != null ? r['path'] : null;
+            final result = await picker.FilePicker.pickFiles(              
+              initialDirectory: directory,
               type: picker.FileType.custom,
-              withData: true,
               allowedExtensions: ['aes'],
             );
-            if (result != null) {
+            if (result.isNotEmpty) {
+              final file = result.first;
+              final filepath = file.path!;
               try {
-                final cfile = CompositionFile.fromBytes(
-                  result.files.first.bytes!,
-                );
+                final bytes = await file.readAsBytes();
+                final cfile = CompositionFile.fromBytes(bytes);
                 composition = await alib.newComposition();
                 composition = await alib.updateComposition(cfile.composition);
                 presets.set(cfile.presets);
-                compositionFile.value = result.files.first.path;
+                compositionFile.value = filepath;
                 bus.fire(CompositionChangedEvent());
-                this['composition.files.composition'] = {
-                  'file': result.files.first.path!,
-                };
+                this['composition.files.composition'] = {'file': filepath};
                 this['composition.files.directory'] = {
-                  'path': path.dirname(result.files.first.path!),
+                  'path': path.dirname(filepath),
                 };
               } catch (e) {
                 Debug.error(e);
@@ -236,42 +235,35 @@ class Aestesis {
             await file.writeAsString(json);
           saveAs:
           case MenuSelection.saveCompositionAs:
-          // TODO: replace FilePicker
-          /*
-            final filename = await picker.FilePicker.platform.saveFile(
+            composition = await alib.composition();
+            final cfile = CompositionFile(
+              composition: composition!,
+              presets: presets,
+            );
+            final json = jsonEncode(cfile.toJson());
+            final bytes = utf8.encode(json);
+            final uri = await picker.FilePicker.saveFile(
               dialogTitle: 'Save composition',
               type: picker.FileType.custom,
               allowedExtensions: ['aes'],
-              fileName: 'composition.aes',
+              fileName: composition!.name,
+              bytes: bytes,
             );
-            if (filename != null) {
-              try {
-                final realname =
-                    '${path.dirname(filename)}/${path.basenameWithoutExtension(filename)}.aes';
-                final file = File(realname);
-                composition = await alib.composition();
-                composition!.name = path.basenameWithoutExtension(realname);
-                final cfile = CompositionFile(
-                  composition: composition!,
-                  presets: presets,
-                );
-                final json = jsonEncode(cfile.toJson());
-                await file.writeAsString(json);
-                compositionFile.value = realname;
-                this['composition.files.composition'] = {'file': realname};
-                this['composition.files.directory'] = {
-                  'path': path.dirname(file.path),
-                };
-                alib.updateComposition(composition!);
-                bus.fire(
-                  CompositionChangedEvent(),
-                ); // update UI and display problem in case of error
-              } catch (e) {
-                Debug.error(e);
-                // TODO:
-              }
+            if (uri != null) {
+              final filename = uri.toFilePath();
+              final realname =
+                  '${path.dirname(filename)}/${path.basenameWithoutExtension(filename)}.aes';
+              compositionFile.value = realname;
+              composition!.name = path.basenameWithoutExtension(realname);
+              this['composition.files.composition'] = {'file': realname};
+              this['composition.files.directory'] = {
+                'path': path.dirname(filename),
+              };
+              alib.updateComposition(composition!);
+              bus.fire(
+                CompositionChangedEvent(),
+              ); // update UI and display problem in case of error
             }
-            */
           default:
         }
       });

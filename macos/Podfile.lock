@@ -2,26 +2,20 @@ PODS:
   - FlutterMacOS (1.0.0)
   - midi_io (0.0.1):
     - FlutterMacOS
-  - screen_retriever_macos (0.0.1):
-    - FlutterMacOS
 
 DEPENDENCIES:
   - FlutterMacOS (from `Flutter/ephemeral`)
   - midi_io (from `Flutter/ephemeral/.symlinks/plugins/midi_io/macos`)
-  - screen_retriever_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos`)
 
 EXTERNAL SOURCES:
   FlutterMacOS:
     :path: Flutter/ephemeral
   midi_io:
     :path: Flutter/ephemeral/.symlinks/plugins/midi_io/macos
-  screen_retriever_macos:
-    :path: Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos
 
 SPEC CHECKSUMS:
-  FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
+  FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
   midi_io: bc7e9c8917d496e6c41a1cc3289653aec16fda84
-  screen_retriever_macos: 452e51764a9e1cdb74b3c541238795849f21557f
 
 PODFILE CHECKSUM: bd459fa9cdcbf5197d76a57672f0f324cf7a328f
 

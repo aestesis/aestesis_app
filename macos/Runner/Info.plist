@@ -22,11 +22,27 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>NSBluetoothWhileInUseUsageDescription</key>
+	<string>midi bluetooth</string>
+	<key>NSCameraUsageDescription</key>
+	<string>video input</string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>file access</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>file access</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>file access</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>$(PRODUCT_COPYRIGHT)</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>network file access</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>audio access</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>file access</string>
 </dict>
 </plist>

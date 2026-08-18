@@ -7,6 +7,7 @@ import Foundation
 
 import aestesis_engine
 import desktop_drop
+import file_picker_darwin
 import midi_io
 import open_file_macos
 import package_info_plus
@@ -18,6 +19,7 @@ import window_manager
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AestesisEnginePlugin.register(with: registry.registrar(forPlugin: "AestesisEnginePlugin"))
   DesktopDropPlugin.register(with: registry.registrar(forPlugin: "DesktopDropPlugin"))
+  FilePickerPlugin.register(with: registry.registrar(forPlugin: "FilePickerPlugin"))
   MidiIoPlugin.register(with: registry.registrar(forPlugin: "MidiIoPlugin"))
   OpenFileMacosPlugin.register(with: registry.registrar(forPlugin: "OpenFileMacosPlugin"))
   FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))

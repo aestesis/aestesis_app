@@ -37,6 +37,7 @@ dependencies:
   path: any
   open_file_macos: any
   uuid: any
+  okcolor: any
 
 dev_dependencies:
   flutter_test:
