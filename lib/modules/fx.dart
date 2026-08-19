@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:aestesis/core/flutter.extensions.dart';
 import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:bb.flutter/bb.dart';
 import 'package:bb_dart/bb_dart.dart';
@@ -48,84 +49,116 @@ class _FxModuleState extends State<FxModule> {
     final cfx = module[FxControl.asset.id];
     final clevel = module[FxControl.level.id];
     return Padding(
-        padding: const EdgeInsets.all(5),
-        child: Row(children: [
+      padding: const EdgeInsets.all(5),
+      child: Row(
+        children: [
           Expanded(
-              child: Column(children: [
-            SizedBox(
-                height: 20,
-                child: Row(children: [
-                  const Spacer(),
-                  if (kDebugMode)
-                    UIIconButton(
-                        asset: UIIcon.filesSave,
-                        tooltip: 'Save Previews',
-                        onTap: () async {
-                          savePreviews();
-                        })
-                ])),
-            const SizedBox(height: 5),
-            Expanded(
-                child: Scrollbar(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 20,
+                  child: Row(
+                    children: [
+                      const Spacer(),
+                      if (kDebugMode)
+                        UIIconButton(
+                          asset: UIIcon.filesSave,
+                          tooltip: 'Save Previews',
+                          onTap: () async {
+                            savePreviews();
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Expanded(
+                  child: Scrollbar(
                     controller: scrollController,
                     child: CustomScrollView(
-                        controller: scrollController,
-                        slivers: [
-                          SliverGrid.builder(
-                              itemCount: assets.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithMinMaxCrossAxisExtent(
-                                      maxCrossAxisCount: assets.length,
-                                      minCrossAxisExtent: 160,
-                                      crossAxisSpacing: 10,
-                                      mainAxisSpacing: 10,
-                                      mainAxisExtent: 90),
-                              itemBuilder: (_, i) => AssetView(
-                                    key: Key('${module.id}.${assets[i].id}'),
-                                    moduleId: module.id,
-                                    asset: assets[i],
-                                    selected: cfx.value.toInt() == i,
-                                    onTap: () {
-                                      if (cfx.value.toInt() != i) {
-                                        cfx.value = i.toDouble();
-                                        cfx.change(
-                                            source: ControlChangeSource.ui);
-                                      }
-                                    },
-                                  )),
-                          const SliverToBoxAdapter(child: SizedBox(height: 10))
-                        ])))
-          ])),
+                      controller: scrollController,
+                      slivers: [
+                        SliverGrid.builder(
+                          itemCount: assets.length,
+                          gridDelegate:
+                              SliverGridDelegateWithMinMaxCrossAxisExtent(
+                                maxCrossAxisCount: assets.length,
+                                minCrossAxisExtent: 160,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                mainAxisExtent:
+                                    aes
+                                        .compositionSettings
+                                        ?.previewSize
+                                        .height ??
+                                    90,
+                              ),
+                          itemBuilder: (_, i) => AssetView(
+                            key: Key('${module.id}.${assets[i].id}'),
+                            moduleId: module.id,
+                            asset: assets[i],
+                            selected: cfx.value.toInt() == i,
+                            onTap: () {
+                              if (cfx.value.toInt() != i) {
+                                cfx.value = i.toDouble();
+                                cfx.change(source: ControlChangeSource.ui);
+                              }
+                            },
+                          ),
+                        ),
+                        const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(width: 5),
           Container(width: 0.5, color: ColorScheme.of(context).inversePrimary),
           const SizedBox(width: 10),
           SizedBox(
-              width: 338,
-              child: Column(children: [
+            width: 338,
+            child: Column(
+              children: [
                 SizedBox(
-                    height: 20,
-                    child: Row(children: [
-                      Text(module.name, style: TextTheme.of(context).bodySmall)
-                    ])),
+                  height: 20,
+                  child: Row(
+                    children: [
+                      Text(module.name, style: TextTheme.of(context).bodySmall),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 5),
                 ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: NativeView(
-                                moduleId: widget.moduleId,
-                                assetId: widget.moduleId)))),
+                  borderRadius: BorderRadius.circular(5),
+                  child: AspectRatio(
+                    aspectRatio: aes.compositionSettings?.aspectRatio ?? 16 / 9,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: NativeView(
+                        moduleId: widget.moduleId,
+                        assetId: widget.moduleId,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 5),
                 Expanded(
-                    child: Center(
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  ControlKnob(control: clevel),
-                ])))
-              ])),
-          const SizedBox(width: 5)
-        ]));
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [ControlKnob(control: clevel)],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 5),
+        ],
+      ),
+    );
   }
 
   void savePreviews() async {

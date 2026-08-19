@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:aestesis/core/flutter.extensions.dart';
 import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:bb_dart/bb_dart.dart';
 import 'package:collection/collection.dart';
@@ -54,145 +55,197 @@ class _LutModuleState extends State<LutModule> {
     final fade = module[LutControl.fade.id];
     final intensity = module[LutControl.intensity.id];
     return UIContextMenu(
-        menu: [
-          if (assets.isNotEmpty)
-            UIMenuItem(
-                text: 'Remove all luts',
-                icon: UIIcon.delete,
-                color: Colors.redAccent,
-                onTap: () {
-                  aes.bus.fire(RemoveAssetsEvent(
-                      module: module,
-                      assets: [...assets.where((a) => a.uri != null)]));
-                })
-        ],
-        child: DropTarget(
-            onDragDone: (details) {
-              add(
-                  files: details.files
-                      .where((file) =>
-                          fileFormats.any((ext) =>
-                              file.path.toLowerCase().endsWith('.$ext')) ==
-                          true)
-                      .map((f) => f.path));
+      menu: [
+        if (assets.isNotEmpty)
+          UIMenuItem(
+            text: 'Remove all luts',
+            icon: UIIcon.delete,
+            color: Colors.redAccent,
+            onTap: () {
+              aes.bus.fire(
+                RemoveAssetsEvent(
+                  module: module,
+                  assets: [...assets.where((a) => a.uri != null)],
+                ),
+              );
             },
-            onDragEntered: (_) {
-              widget.onSelected?.call(true);
-            },
-            onDragExited: (_) {
-              widget.onSelected?.call(false);
-            },
-            child: Padding(
-                padding: const EdgeInsets.all(5),
-                child: Row(children: [
-                  Expanded(
-                      child: Column(children: [
+          ),
+      ],
+      child: DropTarget(
+        onDragDone: (details) {
+          add(
+            files: details.files
+                .where(
+                  (file) =>
+                      fileFormats.any(
+                        (ext) => file.path.toLowerCase().endsWith('.$ext'),
+                      ) ==
+                      true,
+                )
+                .map((f) => f.path),
+          );
+        },
+        onDragEntered: (_) {
+          widget.onSelected?.call(true);
+        },
+        onDragExited: (_) {
+          widget.onSelected?.call(false);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
                     SizedBox(
-                        height: 20,
-                        child: Row(children: [
+                      height: 20,
+                      child: Row(
+                        children: [
                           const Spacer(),
                           UIIconButton(
-                              asset: UIIcon.add,
-                              tooltip: 'Add lut files',
-                              onTap: () async {
-                                final r = aes['lut.files.directory'];
-                                final directory = r != null ? r['path'] : null;
-                                final result = await aes.alib.pickFiles(
-                                    "Add lut files",
-                                    directory,
-                                    true,
-                                    fileFormats);
-                                if (result.isEmpty) return;
-                                final files = [...result.whereType<String>()];
-                                add(files: files);
-                                aes['lut.files.directory'] = {
-                                  'path': path.dirname(files.first)
-                                };
-                              })
-                        ])),
+                            asset: UIIcon.add,
+                            tooltip: 'Add lut files',
+                            onTap: () async {
+                              final r = aes['lut.files.directory'];
+                              final directory = r != null ? r['path'] : null;
+                              final result = await aes.alib.pickFiles(
+                                "Add lut files",
+                                directory,
+                                true,
+                                fileFormats,
+                              );
+                              if (result.isEmpty) return;
+                              final files = [...result.whereType<String>()];
+                              add(files: files);
+                              aes['lut.files.directory'] = {
+                                'path': path.dirname(files.first),
+                              };
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 5),
                     Expanded(
-                        child: Scrollbar(
-                            controller: scrollController,
-                            child: CustomScrollView(
-                                controller: scrollController,
-                                slivers: [
-                                  SliverGrid.builder(
-                                      itemCount: assets.length,
-                                      gridDelegate:
-                                          SliverGridDelegateWithMinMaxCrossAxisExtent(
-                                              maxCrossAxisCount: assets.length,
-                                              minCrossAxisExtent: 160,
-                                              crossAxisSpacing: 10,
-                                              mainAxisSpacing: 10,
-                                              mainAxisExtent: 90),
-                                      itemBuilder: (_, i) => LutItem(
-                                          module: module,
-                                          asset: assets[i],
-                                          selected: assetControl.value ==
-                                              i.toDouble(),
-                                          onTap:
-                                              assetControl.value != i.toDouble()
-                                                  ? () {
-                                                      assetControl.value =
-                                                          i.toDouble();
-                                                      assetControl.change(
-                                                          source:
-                                                              ControlChangeSource
-                                                                  .ui);
-                                                    }
-                                                  : null)),
-                                  const SliverToBoxAdapter(
-                                      child: SizedBox(height: 10))
-                                ])))
-                  ])),
-                  const SizedBox(width: 5),
-                  Container(
-                      width: 0.5, color: ColorScheme.of(context).inversePrimary),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                      width: 338,
-                      child: Column(children: [
-                        SizedBox(
-                            height: 20,
-                            child: Row(children: [
-                              Text(module.name,
-                                  style: TextTheme.of(context).bodySmall)
-                            ])),
-                        const SizedBox(height: 5),
-                        ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: AspectRatio(
-                                aspectRatio: 16 / 9,
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: NativeView(
-                                        moduleId: widget.moduleId,
-                                        assetId: widget.moduleId)))),
-                        const SizedBox(height: 5),
-                        Expanded(
-                            child: Center(
-                                child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                              ControlKnob(control: fade),
-                              const SizedBox(width: 10),
-                              ControlKnob(control: intensity),
-                            ])))
-                      ])),
-                  const SizedBox(width: 5)
-                ]))));
+                      child: Scrollbar(
+                        controller: scrollController,
+                        child: CustomScrollView(
+                          controller: scrollController,
+                          slivers: [
+                            SliverGrid.builder(
+                              itemCount: assets.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithMinMaxCrossAxisExtent(
+                                    maxCrossAxisCount: assets.length,
+                                    minCrossAxisExtent: 160,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10,
+                                    mainAxisExtent: 90,
+                                  ),
+                              itemBuilder: (_, i) => LutItem(
+                                module: module,
+                                asset: assets[i],
+                                selected: assetControl.value == i.toDouble(),
+                                onTap: assetControl.value != i.toDouble()
+                                    ? () {
+                                        assetControl.value = i.toDouble();
+                                        assetControl.change(
+                                          source: ControlChangeSource.ui,
+                                        );
+                                      }
+                                    : null,
+                              ),
+                            ),
+                            const SliverToBoxAdapter(
+                              child: SizedBox(height: 10),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 5),
+              Container(
+                width: 0.5,
+                color: ColorScheme.of(context).inversePrimary,
+              ),
+              const SizedBox(width: 10),
+              SizedBox(
+                width: 338,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20,
+                      child: Row(
+                        children: [
+                          Text(
+                            module.name,
+                            style: TextTheme.of(context).bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: AspectRatio(
+                        aspectRatio:
+                            aes.compositionSettings?.aspectRatio ?? 16 / 9,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: NativeView(
+                            moduleId: widget.moduleId,
+                            assetId: widget.moduleId,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Expanded(
+                      child: Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ControlKnob(control: fade),
+                            const SizedBox(width: 10),
+                            ControlKnob(control: intensity),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 5),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> add({required Iterable<String> files}) async {
-    aes.bus.fire(AddAssetsEvent(module: module, assets: [
-      ...files
-          .map((file) => Asset(
-              id: file,
-              name: path.basenameWithoutExtension(file),
-              uri: 'file:$file'))
-          .where((a) => assets.firstWhereOrNull((o) => a.id == o.id) == null)
-    ]));
+    aes.bus.fire(
+      AddAssetsEvent(
+        module: module,
+        assets: [
+          ...files
+              .map(
+                (file) => Asset(
+                  id: file,
+                  name: path.basenameWithoutExtension(file),
+                  uri: 'file:$file',
+                ),
+              )
+              .where(
+                (a) => assets.firstWhereOrNull((o) => a.id == o.id) == null,
+              ),
+        ],
+      ),
+    );
   }
 
   Module get module => aes.composition![widget.moduleId];
@@ -216,31 +269,36 @@ class LutItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UIContextMenu(
-        menu: [
-          if (asset.uri != null)
-            if (Platform.isMacOS && asset.uri != null)
-              UIMenuItem(
-                  text: 'Show in finder',
-                  icon: UIIcon.finder,
-                  onTap: () {
-                    OpenFileMacos().open(asset.uri!.replaceAll('file:', ''),
-                        viewInFinder: true);
-                  }),
-          UIMenuItem(
-              text: 'Remove lut',
-              icon: UIIcon.delete,
-              color: Colors.redAccent,
+      menu: [
+        if (asset.uri != null)
+          if (Platform.isMacOS && asset.uri != null)
+            UIMenuItem(
+              text: 'Show in finder',
+              icon: UIIcon.finder,
               onTap: () {
-                aes.bus
-                    .fire(RemoveAssetsEvent(module: module, assets: [asset]));
-              })
-        ],
-        child: AssetView(
-            key: Key('${module.id}.${asset.id}'),
-            moduleId: module.id,
-            asset: asset,
-            selected: selected,
-            onTap: onTap));
+                OpenFileMacos().open(
+                  asset.uri!.replaceAll('file:', ''),
+                  viewInFinder: true,
+                );
+              },
+            ),
+        UIMenuItem(
+          text: 'Remove lut',
+          icon: UIIcon.delete,
+          color: Colors.redAccent,
+          onTap: () {
+            aes.bus.fire(RemoveAssetsEvent(module: module, assets: [asset]));
+          },
+        ),
+      ],
+      child: AssetView(
+        key: Key('${module.id}.${asset.id}'),
+        moduleId: module.id,
+        asset: asset,
+        selected: selected,
+        onTap: onTap,
+      ),
+    );
   }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////

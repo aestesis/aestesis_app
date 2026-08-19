@@ -23,7 +23,7 @@ class ShaderModule extends StatefulWidget {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 class _ShaderModuleState extends State<ShaderModule> {
-  static const String appKey = 'NtrlR8';
+  //static const String appKey = 'NtrlR8';
   late final StreamSubscription assetChangedSubscription;
   final scrollController = ScrollController();
   @override
@@ -42,7 +42,7 @@ class _ShaderModuleState extends State<ShaderModule> {
 
   @override
   Widget build(BuildContext context) {
-    final assetControl = module[ShaderControl.asset.id];
+    //final assetControl = module[ShaderControl.asset.id];
     return UIContextMenu(
         menu: [
           if (assets.isNotEmpty)
