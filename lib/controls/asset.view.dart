@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:aestesis/core/flutter.extensions.dart';
 import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,17 +21,18 @@ class AssetView extends StatefulWidget {
   final BorderRadiusGeometry borderRadius;
   final Color color;
   final double gain;
-  const AssetView(
-      {super.key,
-      required this.asset,
-      this.selected = false,
-      this.onTap,
-      required this.moduleId,
-      this.live,
-      this.control,
-      this.color = Colors.white,
-      this.gain = 1,
-      this.borderRadius = const BorderRadius.all(Radius.circular(5))});
+  const AssetView({
+    super.key,
+    required this.asset,
+    this.selected = false,
+    this.onTap,
+    required this.moduleId,
+    this.live,
+    this.control,
+    this.color = Colors.white,
+    this.gain = 1,
+    this.borderRadius = const BorderRadius.all(Radius.circular(5)),
+  });
   @override
   State<AssetView> createState() => _AssetViewState();
 }
@@ -39,7 +41,9 @@ class AssetView extends StatefulWidget {
 class _AssetViewState extends State<AssetView>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   late final animation = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 100));
+    vsync: this,
+    duration: const Duration(milliseconds: 100),
+  );
   late final key = "${widget.moduleId}.${widget.asset.id}";
   late final StreamSubscription previewSubscription;
   @override
@@ -47,14 +51,15 @@ class _AssetViewState extends State<AssetView>
     //Debug.info("AssetView.initState: ${widget.moduleId} ${widget.asset.id}");
     super.initState();
     previewSubscription = aes.previews.listen(
-        moduleId: widget.moduleId,
-        assetId: widget.asset.id,
-        onData: (preview) {
-          setState(() {});
-          if (!(widget.live == true || widget.selected)) {
-            animation.reverse();
-          }
-        });
+      moduleId: widget.moduleId,
+      assetId: widget.asset.id,
+      onData: (preview) {
+        setState(() {});
+        if (!(widget.live == true || widget.selected)) {
+          animation.reverse();
+        }
+      },
+    );
     animation.addListener(() {
       if (mounted) setState(() {});
     });
@@ -90,48 +95,66 @@ class _AssetViewState extends State<AssetView>
         : ColorScheme.of(context).primaryContainer;
     final textColor = widget.selected
         ? ColorScheme.of(context).onTertiary
-        : ColorScheme.of(context).onPrimaryContainer.withValues(alpha:0.6);
+        : ColorScheme.of(context).onPrimaryContainer.withValues(alpha: 0.6);
+    final size = aes.compositionSettings?.previewSize ?? Size(160, 90);
     return Center(
-        child: GestureDetector(
-            onTap: widget.onTap,
-            child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ClipRRect(
-                    borderRadius: widget.borderRadius,
-                    child: Container(
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: ClipRRect(
+            borderRadius: widget.borderRadius,
+            child: Container(
+              width: size.width,
+              height: size.height,
+              color: color.withValues(alpha: 0.4),
+              child: Center(
+                child: Stack(
+                  children: [
+                    if (aes.previews[key] != null && animation.value < 1)
+                      aes.previews[key]!,
+                    if (animation.value > 0)
+                      Opacity(
+                        opacity: animation.value,
+                        child: NativeView(
+                          color: widget.color, // not used with FlutterTexture
+                          gain: widget.gain, // not used with FlutterTexture
+                          moduleId: widget.moduleId,
+                          assetId: widget.asset.id,
+                        ),
+                      ),
+                    if (widget.selected)
+                      Positioned(
+                        top: 0,
+                        child: ControlProgress(
+                          control: widget.control,
+                          color: color,
+                        ),
+                      ),
+                    Positioned(
+                      bottom: 0,
+                      child: Container(
                         width: 160,
-                        height: 90,
-                        color: color.withValues(alpha:0.4),
-                        child: Center(
-                            child: Stack(children: [
-                          if (aes.previews[key] != null && animation.value < 1)
-                            aes.previews[key]!,
-                          if (animation.value > 0)
-                            Opacity(
-                                opacity: animation.value,
-                                child: NativeView(
-                                    color: widget.color, // not used with FlutterTexture
-                                    gain: widget.gain,  // not used with FlutterTexture
-                                    moduleId: widget.moduleId,
-                                    assetId: widget.asset.id)),
-                          if (widget.selected)
-                            Positioned(
-                                top: 0,
-                                child: ControlProgress(
-                                    control: widget.control, color: color)),
-                          Positioned(
-                              bottom: 0,
-                              child: Container(
-                                  width: 160,
-                                  height: 15,
-                                  color: color.withValues(alpha:0.6),
-                                  child: Text(widget.asset.name,
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.clip,
-                                      style: TextTheme.of(context)
-                                          .bodySmall!
-                                          .apply(color: textColor))))
-                        ])))))));
+                        height: 15,
+                        color: color.withValues(alpha: 0.6),
+                        child: Text(
+                          widget.asset.name,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.clip,
+                          style: TextTheme.of(
+                            context,
+                          ).bodySmall!.apply(color: textColor),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -200,43 +223,48 @@ class _ControlProgressState extends State<ControlProgress>
   Widget build(BuildContext context) {
     const double width = 160;
     return GestureDetector(
-        onTapDown: (d) {
-          setProgress = d.localPosition.dx / width;
-          setTicker(true);
-        },
-        onLongPressMoveUpdate: (d) {
-          setProgress = d.localPosition.dx / width;
-          setTicker(true);
-        },
-        onHorizontalDragUpdate: (d) {
-          setProgress = d.localPosition.dx / width;
-          setTicker(true);
-        },
-        onTapUp: (details) {
-          setTicker(false);
-        },
-        onLongPressUp: () {
-          setTicker(false);
-        },
-        onHorizontalDragEnd: (_) {
-          setTicker(false);
-        },
-        child: SizedBox(
-            width: width,
-            height: 15,
-            child: Row(children: [
-              if (progress > 0)
-                Container(
-                  width: width * progress,
-                  height: 15,
-                  color: widget.color.withValues(alpha:0.9),
-                ),
-              Expanded(
-                  child: Container(
+      onTapDown: (d) {
+        setProgress = d.localPosition.dx / width;
+        setTicker(true);
+      },
+      onLongPressMoveUpdate: (d) {
+        setProgress = d.localPosition.dx / width;
+        setTicker(true);
+      },
+      onHorizontalDragUpdate: (d) {
+        setProgress = d.localPosition.dx / width;
+        setTicker(true);
+      },
+      onTapUp: (details) {
+        setTicker(false);
+      },
+      onLongPressUp: () {
+        setTicker(false);
+      },
+      onHorizontalDragEnd: (_) {
+        setTicker(false);
+      },
+      child: SizedBox(
+        width: width,
+        height: 15,
+        child: Row(
+          children: [
+            if (progress > 0)
+              Container(
+                width: width * progress,
                 height: 15,
-                color: widget.color.withValues(alpha:0.6),
-              ))
-            ])));
+                color: widget.color.withValues(alpha: 0.9),
+              ),
+            Expanded(
+              child: Container(
+                height: 15,
+                color: widget.color.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void setControlSubscription() {

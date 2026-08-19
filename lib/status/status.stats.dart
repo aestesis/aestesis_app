@@ -48,7 +48,7 @@ class _StatusBarState extends State<StatusStats> {
               const SizedBox(width: 5),
               Expanded(
                   child: Text(
-                      min(statistics!.fps, aes.compositionSettings!.fps)
+                      min(statistics!.fps, statistics!.fps)
                           .toStringAsFixed(0),
                       style: tt))
             ])),

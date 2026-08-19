@@ -197,7 +197,7 @@ class Aestesis {
           case MenuSelection.openComposition:
             final r = this['composition.files.directory'];
             final directory = r != null ? r['path'] : null;
-            final result = await picker.FilePicker.pickFiles(              
+            final result = await picker.FilePicker.pickFiles(
               initialDirectory: directory,
               type: picker.FileType.custom,
               allowedExtensions: ['aes'],
@@ -242,7 +242,7 @@ class Aestesis {
             );
             final json = jsonEncode(cfile.toJson());
             final bytes = utf8.encode(json);
-            final uri = await picker.FilePicker.saveFile(              
+            final uri = await picker.FilePicker.saveFile(
               dialogTitle: 'Save composition',
               type: picker.FileType.custom,
               allowedExtensions: ['aes'],
@@ -370,8 +370,8 @@ class PreviewManager {
     final image = Image.memory(
       preview.data,
       fit: BoxFit.cover,
-      cacheHeight: 90,
-      height: 90,
+      cacheHeight: aes.compositionSettings?.previewSize.height.round() ?? 90,
+      height: aes.compositionSettings?.previewSize.height ?? 90,
     );
     image.image
         .resolve(const ImageConfiguration())

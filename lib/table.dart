@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aestesis/core/flutter.extensions.dart';
 import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:reorderable_grid/reorderable_grid.dart';
@@ -29,6 +30,7 @@ class TableView extends StatefulWidget {
 class TableViewState extends State<TableView> {
   final scrollController = ScrollController();
   late final StreamSubscription compositionChangedSubscription;
+  late final StreamSubscription settingsChangedSubscription;
   late final StreamSubscription aboutSubscription;
   TableOption option = TableOption.none;
   bool about = false;
@@ -53,6 +55,9 @@ class TableViewState extends State<TableView> {
         });
       }
     });
+    settingsChangedSubscription = aes.bus.on<SettingsChangeEvent>().listen((_) {
+      if (mounted) setState(() {});
+    });
     loadComposition();
   }
 
@@ -63,6 +68,7 @@ class TableViewState extends State<TableView> {
 
   @override
   void dispose() {
+    settingsChangedSubscription.cancel();
     compositionChangedSubscription.cancel();
     aboutSubscription.cancel();
     super.dispose();
@@ -85,6 +91,8 @@ class TableViewState extends State<TableView> {
 
   @override
   Widget build(BuildContext context) {
+    final aspectRatio = aes.compositionSettings?.aspectRatio ?? 16 / 9;
+    final mheight = 300.0 - 190 + 338 / aspectRatio;
     return UIContextMenu(
       isRoot: true,
       menu: [
@@ -127,7 +135,7 @@ class TableViewState extends State<TableView> {
                                 minCrossAxisExtent: 840,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
-                                mainAxisExtent: 300,
+                                mainAxisExtent: mheight,
                               ),
                           itemBuilder: (BuildContext context, int index) =>
                               ModuleView(
