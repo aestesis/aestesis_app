@@ -235,6 +235,8 @@ class Aestesis {
             await file.writeAsString(json);
           saveAs:
           case MenuSelection.saveCompositionAs:
+            final r = this['composition.files.directory'];
+            final directory = r != null ? r['path'] : null;
             composition = await alib.composition();
             final cfile = CompositionFile(
               composition: composition!,
@@ -243,10 +245,11 @@ class Aestesis {
             final json = jsonEncode(cfile.toJson());
             final bytes = utf8.encode(json);
             final uri = await picker.FilePicker.saveFile(
+              initialDirectory: directory,
               dialogTitle: 'Save composition',
               type: picker.FileType.custom,
               allowedExtensions: ['aes'],
-              fileName: composition!.name,
+              fileName: '${composition!.name}.aes',
               bytes: bytes,
             );
             if (uri != null) {

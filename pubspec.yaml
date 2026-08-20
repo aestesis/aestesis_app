@@ -16,7 +16,8 @@ dependencies:
   bb.flutter:
     git: https://github.com/aestesis/bb.flutter.git
   aestesis_engine:
-    git: https://github.com/aestesis/aestesis_engine.git
+      path: ../aestesis_engine
+#    git: https://github.com/aestesis/aestesis_engine.git
   midi_io:
     git:
       url: https://github.com/aestesis/flutter_midi.git
