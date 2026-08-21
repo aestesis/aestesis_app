@@ -29,7 +29,7 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Audio capture</string>
+	<string>Audio capture</string> 
 	<key>NSCameraUsageDescription</key>
 	<string>Video capture</string>
 </dict>

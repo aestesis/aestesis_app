@@ -1,0 +1,1 @@
+ln -s /Users/renanyoy/git/aestesis_alib /Users/renanyoy/git/aestesis_app/macos/Flutter/ephemeral/Packages/aestesis_alib
