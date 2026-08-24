@@ -315,7 +315,7 @@ class Aestesis {
       WindowOptions windowOptions = WindowOptions(
         size: windowSize,
         minimumSize: minWindowSize,
-        center: true,
+        //center: true,
         backgroundColor: Colors.transparent,
         skipTaskbar: false,
         titleBarStyle: TitleBarStyle.hidden,
