@@ -48,6 +48,7 @@ class _FxModuleState extends State<FxModule> {
   Widget build(BuildContext context) {
     final cfx = module[FxControl.asset.id];
     final clevel = module[FxControl.level.id];
+    final cname = assets[cfx.value.toInt()].name;
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Row(
@@ -125,7 +126,7 @@ class _FxModuleState extends State<FxModule> {
                   height: 20,
                   child: Row(
                     children: [
-                      Text(module.name, style: TextTheme.of(context).bodySmall),
+                      Text('${module.name} - $cname', style: TextTheme.of(context).bodySmall),
                     ],
                   ),
                 ),

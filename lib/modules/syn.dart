@@ -46,6 +46,7 @@ class _SynModuleState extends State<SynModule> {
   @override
   Widget build(BuildContext context) {
     final control = module[SynControl.asset.id];
+    final cname = assets[control.value.toInt()].name;
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Row(
@@ -121,7 +122,10 @@ class _SynModuleState extends State<SynModule> {
                   height: 20,
                   child: Row(
                     children: [
-                      Text(module.name, style: TextTheme.of(context).bodySmall),
+                      Text(
+                        '${module.name} - $cname',
+                        style: TextTheme.of(context).bodySmall,
+                      ),
                     ],
                   ),
                 ),
