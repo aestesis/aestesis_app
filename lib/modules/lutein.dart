@@ -22,16 +22,16 @@ import '../ui/sliver.grid.delegate.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class LutModule extends StatefulWidget {
+class LuteinModule extends StatefulWidget {
   final String moduleId;
   final BoolCallback? onSelected;
-  const LutModule({super.key, required this.moduleId, this.onSelected});
+  const LuteinModule({super.key, required this.moduleId, this.onSelected});
   @override
-  State<LutModule> createState() => _LutModuleState();
+  State<LuteinModule> createState() => _LuteinModuleState();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class _LutModuleState extends State<LutModule> {
+class _LuteinModuleState extends State<LuteinModule> {
   static const fileFormats = ['cube'];
   late final StreamSubscription assetChangedSubscription;
   final scrollController = ScrollController();
@@ -54,6 +54,7 @@ class _LutModuleState extends State<LutModule> {
     final assetControl = module[LutControl.asset.id];
     final fade = module[LutControl.fade.id];
     final intensity = module[LutControl.intensity.id];
+    final cname = assets[assetControl.value.toInt()].name;
     return UIContextMenu(
       menu: [
         if (assets.isNotEmpty)
@@ -182,7 +183,7 @@ class _LutModuleState extends State<LutModule> {
                       child: Row(
                         children: [
                           Text(
-                            module.name,
+                            '${module.name} - $cname',
                             style: TextTheme.of(context).bodySmall,
                           ),
                         ],

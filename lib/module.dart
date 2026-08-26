@@ -7,7 +7,7 @@ import 'package:reorderable_grid/reorderable_grid.dart';
 
 import 'aestesis.dart';
 import 'modules/fx.dart';
-import 'modules/lut.dart';
+import 'modules/lutein.dart';
 import 'table.dart';
 import 'ui/menu.context.dart';
 import 'ui/icon.dart';
@@ -133,7 +133,7 @@ class _ModuleViewState extends State<ModuleView>
       case ModuleType.fx:
         return FxModule(moduleId: module.id);
       case ModuleType.lut:
-        return LutModule(
+        return LuteinModule(
             moduleId: module.id,
             onSelected: (selected) => widget.onSelected?.call(selected));
       case ModuleType.player:

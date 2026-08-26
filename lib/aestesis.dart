@@ -212,6 +212,7 @@ class Aestesis {
                 composition = await alib.updateComposition(cfile.composition);
                 presets.set(cfile.presets);
                 compositionFile.value = filepath;
+                composition!.name = path.basenameWithoutExtension(filepath);
                 bus.fire(CompositionChangedEvent());
                 this['composition.files.composition'] = {'file': filepath};
                 this['composition.files.directory'] = {
@@ -298,6 +299,7 @@ class Aestesis {
       composition = await alib.updateComposition(cfile.composition);
       presets.set(cfile.presets);
       compositionFile.value = file.path;
+      composition!.name = path.basenameWithoutExtension(file.path);
       bus.fire(CompositionChangedEvent());
     } catch (e) {
       Debug.error(e);
@@ -372,7 +374,7 @@ class PreviewManager {
     }
     final image = Image.memory(
       preview.data,
-      fit: BoxFit.cover,
+      fit: .fill,
       cacheHeight: aes.compositionSettings?.previewSize.height.round() ?? 90,
       height: aes.compositionSettings?.previewSize.height ?? 90,
     );
