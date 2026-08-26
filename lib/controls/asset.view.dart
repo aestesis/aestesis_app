@@ -46,6 +46,7 @@ class _AssetViewState extends State<AssetView>
   );
   late final key = "${widget.moduleId}.${widget.asset.id}";
   late final StreamSubscription previewSubscription;
+  PreviewInfo? previewInfo;
   @override
   void initState() {
     //Debug.info("AssetView.initState: ${widget.moduleId} ${widget.asset.id}");
@@ -53,7 +54,8 @@ class _AssetViewState extends State<AssetView>
     previewSubscription = aes.previews.listen(
       moduleId: widget.moduleId,
       assetId: widget.asset.id,
-      onData: (preview) {
+      onData: (info) {
+        previewInfo = info;
         setState(() {});
         if (!(widget.live == true || widget.selected)) {
           animation.reverse();
@@ -97,6 +99,9 @@ class _AssetViewState extends State<AssetView>
         ? ColorScheme.of(context).onTertiary
         : ColorScheme.of(context).onPrimaryContainer.withValues(alpha: 0.6);
     final size = aes.compositionSettings?.previewSize ?? Size(160, 90);
+    final assetPreview = (aes.previews[key] != null && animation.value < 1)
+        ? aes.previews[key]!
+        : null;
     return Center(
       child: GestureDetector(
         onTap: widget.onTap,
@@ -108,47 +113,58 @@ class _AssetViewState extends State<AssetView>
               width: size.width,
               height: size.height,
               color: color.withValues(alpha: 0.4),
-              child: Center(
-                child: Stack(
-                  children: [
-                    if (aes.previews[key] != null && animation.value < 1)
-                      aes.previews[key]!,
-                    if (animation.value > 0)
-                      Opacity(
-                        opacity: animation.value,
-                        child: NativeView(
-                          color: widget.color, // not used with FlutterTexture
-                          gain: widget.gain, // not used with FlutterTexture
-                          moduleId: widget.moduleId,
-                          assetId: widget.asset.id,
+              child: Stack(
+                fit: .passthrough,
+                children: [
+                  if (assetPreview != null) ...[
+                    if (previewInfo != null)
+                      FittedBox(
+                        alignment: .center,
+                        fit: .cover,
+                        child: SizedBox(
+                          width: previewInfo!.width.toDouble(),
+                          height: previewInfo!.height.toDouble(),
+                          child: assetPreview,
                         ),
-                      ),
-                    if (widget.selected)
-                      Positioned(
-                        top: 0,
-                        child: ControlProgress(
-                          control: widget.control,
-                          color: color,
-                        ),
-                      ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        width: 160,
-                        height: 15,
-                        color: color.withValues(alpha: 0.6),
-                        child: Text(
-                          widget.asset.name,
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.clip,
-                          style: TextTheme.of(
-                            context,
-                          ).bodySmall!.apply(color: textColor),
-                        ),
+                      )
+                    else
+                      assetPreview,
+                  ],
+                  if (animation.value > 0)
+                    Opacity(
+                      opacity: animation.value,
+                      child: NativeView(
+                        color: widget.color, // not used with FlutterTexture
+                        gain: widget.gain, // not used with FlutterTexture
+                        moduleId: widget.moduleId,
+                        assetId: widget.asset.id,
                       ),
                     ),
-                  ],
-                ),
+                  if (widget.selected)
+                    Positioned(
+                      top: 0,
+                      child: ControlProgress(
+                        control: widget.control,
+                        color: color,
+                      ),
+                    ),
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      width: 160,
+                      height: 15,
+                      color: color.withValues(alpha: 0.6),
+                      child: Text(
+                        widget.asset.name,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.clip,
+                        style: TextTheme.of(
+                          context,
+                        ).bodySmall!.apply(color: textColor),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

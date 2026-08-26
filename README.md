@@ -60,7 +60,7 @@ Aestesis allows artists to:
 - ✅ **Asset Management** - Drag & drop video files (.mp4, .mov, .mv4, etc.)
 - ✅ **Real-time Effects** - Shaders, LUTs, video filters
 - ✅ **Multi-module Pipeline** - Chain multiple modules in a composition
-- ✅ **Composition System** - Save/load custom setups (.aes)
+- ✅ **Composition System** - Save/load custom setups (.sis)
 - ✅ **Theme Support** - Light/dark mode switching
 - ✅ **Platform Support** - macOS
 - ✅ **Audio Visualization** - Real-time audio effects

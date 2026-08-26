@@ -200,7 +200,7 @@ class Aestesis {
             final result = await picker.FilePicker.pickFiles(
               initialDirectory: directory,
               type: picker.FileType.custom,
-              allowedExtensions: ['aes'],
+              allowedExtensions: ['sis'],
             );
             if (result.isNotEmpty) {
               final file = result.first;
@@ -249,14 +249,14 @@ class Aestesis {
               initialDirectory: directory,
               dialogTitle: 'Save composition',
               type: picker.FileType.custom,
-              allowedExtensions: ['aes'],
-              fileName: '${composition!.name}.aes',
+              allowedExtensions: ['sis'],
+              fileName: '${composition!.name}.sis',
               bytes: bytes,
             );
             if (uri != null) {
               final filename = uri.toFilePath();
               final realname =
-                  '${path.dirname(filename)}/${path.basenameWithoutExtension(filename)}.aes';
+                  '${path.dirname(filename)}/${path.basenameWithoutExtension(filename)}.sis';
               compositionFile.value = realname;
               composition!.name = path.basenameWithoutExtension(realname);
               this['composition.files.composition'] = {'file': realname};

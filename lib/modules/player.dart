@@ -10,6 +10,7 @@ import 'package:open_file_macos/open_file_macos.dart';
 import 'package:path/path.dart' as path;
 
 import '../aestesis.dart';
+import '../core/flutter.extensions.dart';
 import '../core/native.view.dart';
 import '../ui/button.dart';
 import '../ui/icon.dart';
@@ -138,7 +139,10 @@ class _PlayerModuleState extends State<PlayerModule> {
                                     minCrossAxisExtent: 160,
                                     crossAxisSpacing: 10,
                                     mainAxisSpacing: 10,
-                                    mainAxisExtent: 90,
+                                    mainAxisExtent:
+                                        160 /
+                                        (aes.compositionSettings?.aspectRatio ??
+                                            16 / 9),
                                   ),
                               itemBuilder: (_, i) => UIContextMenu(
                                 menu: [
@@ -229,7 +233,8 @@ class _PlayerModuleState extends State<PlayerModule> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(5),
                       child: AspectRatio(
-                        aspectRatio: 16 / 9,
+                        aspectRatio:
+                            aes.compositionSettings?.aspectRatio ?? 16 / 9,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(5),
                           child: NativeView(
