@@ -132,7 +132,7 @@ class _ModuleViewState extends State<ModuleView>
         return CameraModule(moduleId: module.id);
       case ModuleType.fx:
         return FxModule(moduleId: module.id);
-      case ModuleType.lut:
+      case ModuleType.lutein:
         return LuteinModule(
             moduleId: module.id,
             onSelected: (selected) => widget.onSelected?.call(selected));
@@ -163,7 +163,7 @@ extension ModuleTypeExt on ModuleType {
         return UIIcon.moduleCamera;
       case ModuleType.fx:
         return UIIcon.moduleFx;
-      case ModuleType.lut:
+      case ModuleType.lutein:
         return UIIcon.moduleLut;
       case ModuleType.player:
         return UIIcon.modulePlayer;
