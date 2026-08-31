@@ -314,7 +314,7 @@ class Aestesis {
           ? RectExt.fromJson(bounds).size
           : minWindowSize;
       await windowManager.ensureInitialized();
-      WindowOptions windowOptions = WindowOptions(
+      WindowOptions windowOptions = WindowOptions(        
         size: windowSize,
         minimumSize: minWindowSize,
         //center: true,
