@@ -110,11 +110,11 @@ class _LuteinModuleState extends State<LuteinModule> {
                             onTap: () async {
                               final r = aes['lut.files.directory'];
                               final directory = r != null ? r['path'] : null;
-                              final result = await aes.alib.pickFiles(
-                                "Add lut files",
-                                directory,
-                                true,
-                                fileFormats,
+                              final result = await aes.alib.openPanel(
+                                title: "Add lut files",
+                                directory: directory,
+                                multiple: true,
+                                ext: fileFormats,
                               );
                               if (result.isEmpty) return;
                               final files = [...result.whereType<String>()];

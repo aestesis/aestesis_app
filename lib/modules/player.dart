@@ -107,11 +107,11 @@ class _PlayerModuleState extends State<PlayerModule> {
                             onTap: () async {
                               final r = aes['player.files.directory'];
                               final directory = r != null ? r['path'] : null;
-                              final result = await aes.alib.pickFiles(
-                                "Add video files",
-                                directory,
-                                true,
-                                fileFormats,
+                              final result = await aes.alib.openPanel(
+                                title: "Add video files",
+                                directory: directory,
+                                multiple: true,
+                                ext: fileFormats,
                               );
                               if (result.isEmpty) return;
                               final files = [...result.whereType<String>()];

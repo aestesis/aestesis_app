@@ -5,7 +5,6 @@ import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:aestesis_engine/aestesis_engine.dart' as alib;
 import 'package:bb_dart/bb_dart.dart';
 import 'package:event_bus/event_bus.dart';
-import 'package:file_picker/file_picker.dart' as picker;
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -197,15 +196,15 @@ class Aestesis {
           case MenuSelection.openComposition:
             final r = this['composition.files.directory'];
             final directory = r != null ? r['path'] : null;
-            final result = await picker.FilePicker.pickFiles(
-              initialDirectory: directory,
-              type: picker.FileType.custom,
-              allowedExtensions: ['sis'],
+            final result = await aes.alib.openPanel(
+              title: 'open composition',
+              directory: directory,
+              ext: ['sis'],
             );
             if (result.isNotEmpty) {
-              final file = result.first;
-              final filepath = file.path!;
+              final filepath = result.first;
               try {
+                final file = File(filepath);
                 final bytes = await file.readAsBytes();
                 final cfile = CompositionFile.fromBytes(bytes);
                 composition = await alib.newComposition();
@@ -238,30 +237,29 @@ class Aestesis {
           case MenuSelection.saveCompositionAs:
             final r = this['composition.files.directory'];
             final directory = r != null ? r['path'] : null;
-            composition = await alib.composition();
-            final cfile = CompositionFile(
-              composition: composition!,
-              presets: presets,
+            final filepath = await aes.alib.savePanel(
+              title: 'Save composition',
+              directory: directory,
+              ext: 'sis',
+              filename: '${composition!.name}.sis',
             );
-            final json = jsonEncode(cfile.toJson());
-            final bytes = utf8.encode(json);
-            final uri = await picker.FilePicker.saveFile(
-              initialDirectory: directory,
-              dialogTitle: 'Save composition',
-              type: picker.FileType.custom,
-              allowedExtensions: ['sis'],
-              fileName: '${composition!.name}.sis',
-              bytes: bytes,
-            );
-            if (uri != null) {
-              final filename = uri.toFilePath();
+            if (filepath != null) {
               final realname =
-                  '${path.dirname(filename)}/${path.basenameWithoutExtension(filename)}.sis';
-              compositionFile.value = realname;
+                  '${path.dirname(filepath)}/${path.basenameWithoutExtension(filepath)}.sis';
+              composition = await alib.composition();
               composition!.name = path.basenameWithoutExtension(realname);
+              final cfile = CompositionFile(
+                composition: composition!,
+                presets: presets,
+              );
+              final json = jsonEncode(cfile.toJson());
+              final bytes = utf8.encode(json);
+              final file = File(filepath);
+              await file.writeAsBytes(bytes);
+              compositionFile.value = realname;
               this['composition.files.composition'] = {'file': realname};
               this['composition.files.directory'] = {
-                'path': path.dirname(filename),
+                'path': path.dirname(filepath),
               };
               alib.updateComposition(composition!);
               bus.fire(
@@ -314,7 +312,7 @@ class Aestesis {
           ? RectExt.fromJson(bounds).size
           : minWindowSize;
       await windowManager.ensureInitialized();
-      WindowOptions windowOptions = WindowOptions(        
+      WindowOptions windowOptions = WindowOptions(
         size: windowSize,
         minimumSize: minWindowSize,
         //center: true,
