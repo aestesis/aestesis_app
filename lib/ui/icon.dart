@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:line_icons/line_icons.dart';
@@ -78,7 +78,9 @@ enum UIIcon {
   aestesisGray(svg: 'brands/aestesis.icon.svg', applyColor: false),
   aestesisColor(svg: 'brands/aestesis.icon.color.svg', applyColor: false),
   aestesisColorBis(
-      svg: 'brands/aestesis.icon.color.bis.svg', applyColor: false),
+    svg: 'brands/aestesis.icon.color.bis.svg',
+    applyColor: false,
+  ),
   cameraBack(svg: 'ui/camera.back.svg'),
   cameraBuiltin(svg: 'ui/camera.builtin.svg'),
   cameraContinuity(svg: 'ui/camera.continuity.svg'),
@@ -98,7 +100,8 @@ enum UIIcon {
   previewWindow(svg: 'ui/preview.window.svg'),
   presets(icon: Icons.list),
   finder(icon: Icons.open_in_browser),
-  ;
+  fxFeedback(icon: Icons.refresh),
+  fxNoFeedback(icon: Icons.arrow_downward);
 
   final IconData? icon;
   final String? svg;
@@ -106,18 +109,20 @@ enum UIIcon {
   const UIIcon({this.icon, this.svg, this.applyColor = true});
 
   Widget widget({required UISize size, Color? color}) => Container(
-      width: size.value,
-      height: size.value,
-      alignment: Alignment.center,
-      child: svg != null
-          ? SvgPicture.asset('assets/svg/$svg',
-              colorFilter: color == null || !applyColor
-                  ? null
-                  : ColorFilter.mode(color, BlendMode.srcIn),
-              width: size.value,
-              height: size.value)
-          : Icon(icon, color: applyColor ? color : null, size: size.value));
+    width: size.value,
+    height: size.value,
+    alignment: Alignment.center,
+    child: svg != null
+        ? SvgPicture.asset(
+            'assets/svg/$svg',
+            colorFilter: color == null || !applyColor
+                ? null
+                : ColorFilter.mode(color, BlendMode.srcIn),
+            width: size.value,
+            height: size.value,
+          )
+        : Icon(icon, color: applyColor ? color : null, size: size.value),
+  );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-

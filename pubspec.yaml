@@ -23,6 +23,7 @@ dependencies:
       url: https://github.com/aestesis/flutter_midi.git
       path: midi_io
 
+  material_ui: any
   collection: any
   window_manager: any
   shared_preferences: any

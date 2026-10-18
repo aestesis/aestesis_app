@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:aestesis/core/flutter.extensions.dart';
 import 'package:aestesis_engine/aestesis_engine.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:reorderable_grid/reorderable_grid.dart';
 
 import 'about.dart';

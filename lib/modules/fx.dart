@@ -7,11 +7,12 @@ import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:bb.flutter/bb.dart';
 import 'package:bb_dart/bb_dart.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../aestesis.dart';
 import '../controls/asset.view.dart';
 import '../controls/control.knob.dart';
+import '../controls/control.switch.dart';
 import '../core/native.view.dart';
 import '../ui/button.dart';
 import '../ui/icon.dart';
@@ -49,6 +50,7 @@ class _FxModuleState extends State<FxModule> {
     final cfx = module[FxControl.asset.id];
     final clevel = module[FxControl.level.id];
     final cname = assets[cfx.value.toInt()].name;
+    final cfeedback = module[FxControl.feedback.id];
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Row(
@@ -126,7 +128,10 @@ class _FxModuleState extends State<FxModule> {
                   height: 20,
                   child: Row(
                     children: [
-                      Text('${module.name} - $cname', style: TextTheme.of(context).bodySmall),
+                      Text(
+                        '${module.name} - $cname',
+                        style: TextTheme.of(context).bodySmall,
+                      ),
                     ],
                   ),
                 ),
@@ -149,7 +154,15 @@ class _FxModuleState extends State<FxModule> {
                   child: Center(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: [ControlKnob(control: clevel)],
+                      spacing: 10,
+                      children: [
+                        ControlKnob(control: clevel),
+                        ControlSwitch(
+                          control: cfeedback,
+                          active: .fxFeedback,
+                          inactive: .fxNoFeedback,
+                        ),
+                      ],
                     ),
                   ),
                 ),

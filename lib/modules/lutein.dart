@@ -6,7 +6,7 @@ import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:bb_dart/bb_dart.dart';
 import 'package:collection/collection.dart';
 import 'package:desktop_drop/desktop_drop.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:open_file_macos/open_file_macos.dart';
 import 'package:path/path.dart' as path;
 
@@ -73,23 +73,25 @@ class _LuteinModuleState extends State<LuteinModule> {
           ),
       ],
       child: DropTarget(
-        onDragDone: (details) {
+        acceptedKinds: {.file},
+        onDrop: (details) {
           add(
-            files: details.files
+            files: details.items
+                .whereType<DropFileItem>()
                 .where(
-                  (file) =>
+                  (item) =>
                       fileFormats.any(
-                        (ext) => file.path.toLowerCase().endsWith('.$ext'),
+                        (ext) => item.file.uri.toLowerCase().endsWith('.$ext'),
                       ) ==
                       true,
                 )
-                .map((f) => f.path),
+                .map((item) => item.file.uri.replaceAll('file://', '')),
           );
         },
-        onDragEntered: (_) {
+        onEnter: (_) {
           widget.onSelected?.call(true);
         },
-        onDragExited: (_) {
+        onLeave: () {
           widget.onSelected?.call(false);
         },
         child: Padding(

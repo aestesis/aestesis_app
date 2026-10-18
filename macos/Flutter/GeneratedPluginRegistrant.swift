@@ -6,6 +6,7 @@ import FlutterMacOS
 import Foundation
 
 import aestesis_engine
+import cross_file_darwin
 import desktop_drop
 import midi_io
 import open_file_macos
@@ -17,6 +18,7 @@ import window_manager
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AestesisEnginePlugin.register(with: registry.registrar(forPlugin: "AestesisEnginePlugin"))
+  CrossFileDarwinPlugin.register(with: registry.registrar(forPlugin: "CrossFileDarwinPlugin"))
   DesktopDropPlugin.register(with: registry.registrar(forPlugin: "DesktopDropPlugin"))
   MidiIoPlugin.register(with: registry.registrar(forPlugin: "MidiIoPlugin"))
   OpenFileMacosPlugin.register(with: registry.registrar(forPlugin: "OpenFileMacosPlugin"))

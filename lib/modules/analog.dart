@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:aestesis/core/flutter.extensions.dart';
 import 'package:aestesis_engine/aestesis_engine.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../aestesis.dart';
 import '../core/native.view.dart';
@@ -174,6 +174,7 @@ class _AnalogInputState extends State<AnalogInput> {
     final opacity = module[AnalogSourceControl.opacity.id(widget.asset.id)];
     final gain = module[AnalogSourceControl.gain.id(widget.asset.id)];
     final color = module[AnalogSourceControl.color.id(widget.asset.id)];
+    final lumaKey = module[AnalogSourceControl.lumaKey.id(widget.asset.id)];
     return Center(
       child: Container(
         width: 160,
@@ -228,6 +229,11 @@ class _AnalogInputState extends State<AnalogInput> {
                     right: 11,
                     top: 16,
                     child: ControlKnob(control: gain, size: UISize.medium),
+                  ),
+                  Positioned(
+                    left: 11,
+                    top: 16,
+                    child: ControlKnob(control: lumaKey, size: UISize.medium),
                   ),
                 ],
               ),

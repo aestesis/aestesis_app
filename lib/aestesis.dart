@@ -5,7 +5,7 @@ import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:aestesis_engine/aestesis_engine.dart' as alib;
 import 'package:bb_dart/bb_dart.dart';
 import 'package:event_bus/event_bus.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';

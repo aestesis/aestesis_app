@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:bb_dart/bb_dart.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'icon.dart';
 
@@ -201,6 +201,7 @@ class _UIKnobState extends State<UIKnob> {
                 SizedBox(height: strokeWidth()),
                 Text(
                   primaryDragging ? text() : widget.name,
+                  textAlign: .center,
                   style: TextTheme.of(
                     context,
                   ).bodySmall!.apply(fontSizeFactor: textFactor(widget.size)),
