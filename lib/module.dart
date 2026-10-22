@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:bb_dart/bb_dart.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:reorderable_grid/reorderable_grid.dart';
 
@@ -26,13 +28,14 @@ class ModuleView extends StatefulWidget {
   final bool selected;
   final bool dragging;
   final BoolCallback? onSelected;
-  const ModuleView(
-      {super.key,
-      required this.moduleId,
-      required this.moduleIndex,
-      this.selected = false,
-      this.dragging = false,
-      this.onSelected});
+  const ModuleView({
+    super.key,
+    required this.moduleId,
+    required this.moduleIndex,
+    this.selected = false,
+    this.dragging = false,
+    this.onSelected,
+  });
   @override
   State<ModuleView> createState() => _ModuleViewState();
 }
@@ -41,6 +44,7 @@ class ModuleView extends StatefulWidget {
 class _ModuleViewState extends State<ModuleView>
     with AutomaticKeepAliveClientMixin {
   late final StreamSubscription moduleChangedSubscription;
+  late final StreamSubscription moduleUsageSubscription;
   @override
   void initState() {
     super.initState();
@@ -49,11 +53,15 @@ class _ModuleViewState extends State<ModuleView>
         setState(() {});
       }
     });
+    moduleUsageSubscription = aes.bus.on<StatisticsUpdateEvent>().listen((_) {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
     moduleChangedSubscription.cancel();
+    moduleUsageSubscription.cancel();
     super.dispose();
   }
 
@@ -63,32 +71,39 @@ class _ModuleViewState extends State<ModuleView>
     if (widget.dragging || TableView.maybeOf(context) == null) {
       // table == null means beging dragged
       return container(
-          context: context,
-          child: Container(
-              color: ColorScheme.of(context).surface,
-              child: Center(
-                  child: Text(module.name,
-                      style: TextTheme.of(context).titleMedium))));
+        context: context,
+        child: Container(
+          color: ColorScheme.of(context).surface,
+          child: Center(
+            child: Text(module.name, style: TextTheme.of(context).titleMedium),
+          ),
+        ),
+      );
     }
     return UIContextMenu(
-        isRoot: true,
-        menu: [
-          UIMenuItem(
-              text: 'Remove ${module.type.name.toLowerCase()}',
-              icon: UIIcon.delete,
-              color: Colors.redAccent,
-              onTap: () {
-                aes.bus.fire(RemoveModuleEvent(module: module));
-              }),
-          const UIDivider(),
-          ...ModuleType.values.map((type) => UIMenuItem(
-              text: 'Insert ${type.name.toLowerCase()}',
-              icon: type.icon,
-              onTap: () {
-                aes.bus.fire(InsertModuleEvent(type: type, at: module));
-              }))
-        ],
-        child: container(context: context, child: content(module)));
+      isRoot: true,
+      menu: [
+        UIMenuItem(
+          text: 'Remove ${module.type.name.toLowerCase()}',
+          icon: UIIcon.delete,
+          color: Colors.redAccent,
+          onTap: () {
+            aes.bus.fire(RemoveModuleEvent(module: module));
+          },
+        ),
+        const UIDivider(),
+        ...ModuleType.values.map(
+          (type) => UIMenuItem(
+            text: 'Insert ${type.name.toLowerCase()}',
+            icon: type.icon,
+            onTap: () {
+              aes.bus.fire(InsertModuleEvent(type: type, at: module));
+            },
+          ),
+        ),
+      ],
+      child: container(context: context, child: content(module)),
+    );
   }
 
   Widget container({required BuildContext context, required Widget child}) {
@@ -96,33 +111,44 @@ class _ModuleViewState extends State<ModuleView>
         ? ColorScheme.of(context).tertiary
         : ColorScheme.of(context).inversePrimary;
     return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: AnimatedContainer(
-            duration: aes.fadeDuration,
-            decoration: BoxDecoration(
-                border: Border.all(color: color),
-                borderRadius: BorderRadius.circular(10)),
-            child:
-                Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              handle(
-                  color: color,
-                  child: module.type.icon
-                      .widget(size: UISize.medium, color: color)),
-              Expanded(child: child),
-              handle(color: color)
-            ])));
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: aes.fadeDuration,
+        decoration: BoxDecoration(
+          border: Border.all(color: color),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            handle(
+              color: color,
+              child: module.type.icon.widget(size: UISize.medium, color: color),
+            ),
+            Expanded(child: child),
+            handle(
+              color: color,
+              child: ModuleUsage(moduleId: widget.moduleId),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget handle({required Color color, Widget? child}) =>
       ReorderableGridDragStartListener(
-          index: widget.moduleIndex,
-          child: MouseRegion(
-              cursor: SystemMouseCursors.grab,
-              child: AnimatedContainer(
-                  duration: aes.fadeDuration,
-                  width: 20,
-                  color: color.withValues(alpha:0.2),
-                  child: child)));
+        index: widget.moduleIndex,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.grab,
+          child: AnimatedContainer(
+            duration: aes.fadeDuration,
+            width: 20,
+            color: color.withValues(alpha: 0.2),
+            child: child,
+          ),
+        ),
+      );
 
   Widget content(Module module) {
     switch (module.type) {
@@ -134,12 +160,14 @@ class _ModuleViewState extends State<ModuleView>
         return FxModule(moduleId: module.id);
       case ModuleType.lutein:
         return LuteinModule(
-            moduleId: module.id,
-            onSelected: (selected) => widget.onSelected?.call(selected));
+          moduleId: module.id,
+          onSelected: (selected) => widget.onSelected?.call(selected),
+        );
       case ModuleType.player:
         return PlayerModule(
-            moduleId: module.id,
-            onSelected: (selected) => widget.onSelected?.call(selected));
+          moduleId: module.id,
+          onSelected: (selected) => widget.onSelected?.call(selected),
+        );
       case ModuleType.shader:
         return ShaderModule(moduleId: module.id);
       case ModuleType.syn:
@@ -172,6 +200,64 @@ extension ModuleTypeExt on ModuleType {
       case ModuleType.syn:
         return UIIcon.moduleSyn;
     }
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class ModuleUsage extends StatefulWidget {
+  final String moduleId;
+  const ModuleUsage({super.key, required this.moduleId});
+  @override
+  State<ModuleUsage> createState() => _ModuleUsageState();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class _ModuleUsageState extends State<ModuleUsage>
+    with TickerProviderStateMixin {
+  late final StreamSubscription moduleUsageSubscription;
+  late final Ticker ticker;
+  double usage = 0.0;
+  double tusage = 0.0;
+  @override
+  void initState() {
+    super.initState();
+    moduleUsageSubscription = aes.bus.on<StatisticsUpdateEvent>().listen((_) {
+      tusage = aes.moduleUsage[widget.moduleId] ?? 0.0;
+    });
+    ticker = createTicker((_) {
+      if ((usage - tusage).abs() < 0.001) return;
+      usage = tusage * 0.1 + usage * 0.9;
+      setState(() {});
+    });
+    ticker.start();
+  }
+
+  @override
+  void dispose() {
+    ticker.dispose();
+    moduleUsageSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final iusage = (min(usage, 1) * 1000).toInt();
+    return Padding(
+      padding: EdgeInsets.only(left: 8, right: 8),
+      child: Column(
+        children: [
+          if (iusage < 1000) Expanded(flex: 1000 - iusage, child: Container()),
+          if (iusage > 0)
+            Expanded(
+              flex: iusage,
+              child: Container(
+                color: ColorScheme.of(context).primary.withValues(alpha: 0.5),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////

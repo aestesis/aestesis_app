@@ -59,6 +59,7 @@ class Aestesis {
   AudioLevel? audio;
   Composition? composition;
   CompositionStatistics? statistics;
+  Map<String, double> moduleUsage = {};
   CompositionSettings? compositionSettings;
   ThemeMode _theme = ThemeMode.dark;
   ThemeMode get theme => _theme;
@@ -169,7 +170,16 @@ class Aestesis {
         textures.add(texture);
       });
       statisticsSubscription = message.listenStatistics((statistics) {
+        final modules = (composition?.modules ?? []).whereType<Module>();
         this.statistics = statistics;
+        final frameTime = 1.0 / (compositionSettings?.fps ?? 60);
+        moduleUsage.clear();
+        for (final m in modules) {
+          moduleUsage[m.id] = 0;
+        }
+        for (final ms in statistics.modules) {
+          moduleUsage[ms.id] = ms.usage / frameTime;
+        }
         bus.fire(StatisticsUpdateEvent(statistics: statistics));
       });
       audioSubscription = message.listenAudio((audio) {
