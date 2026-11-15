@@ -1,5 +1,5 @@
 name: aestesis
-description: "Aestesis live visul app"
+description: "Aestesis live visual app"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 0.1.0+1
 repositary: https://github.com/aestesis/aestesis_app.git

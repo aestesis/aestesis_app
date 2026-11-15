@@ -8,7 +8,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_manager/legacy.dart';
 import 'package:path/path.dart' as path;
 
 import 'core/composition.file.dart';
