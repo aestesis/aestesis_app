@@ -243,17 +243,24 @@ class _ModuleUsageState extends State<ModuleUsage>
   @override
   Widget build(BuildContext context) {
     final iusage = (min(usage, 1) * 1000).toInt();
+    final color = Color.lerp(
+      Colors.lightGreenAccent,
+      ColorScheme.of(context).errorContainer,
+      iusage / 1000,
+    )!;
     return Padding(
-      padding: EdgeInsets.only(left: 8, right: 8),
+      padding: EdgeInsets.only(left: 8, right: 8, top: 180, bottom: 5),
       child: Column(
         children: [
-          if (iusage < 1000) Expanded(flex: 1000 - iusage, child: Container()),
+          if (iusage < 1000)
+            Expanded(
+              flex: 1000 - iusage,
+              child: Container(color: Colors.black.withValues(alpha: 0.6)),
+            ),
           if (iusage > 0)
             Expanded(
               flex: iusage,
-              child: Container(
-                color: ColorScheme.of(context).primary.withValues(alpha: 0.5),
-              ),
+              child: Container(color: color),
             ),
         ],
       ),

@@ -5,16 +5,18 @@ import 'package:aestesis_engine/aestesis_engine.dart';
 import 'package:aestesis_engine/aestesis_engine.dart' as alib;
 import 'package:bb_dart/bb_dart.dart';
 import 'package:event_bus/event_bus.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:window_manager/legacy.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as path;
 
 import 'core/composition.file.dart';
 import 'core/flutter.extensions.dart';
 import 'midi/midi.manager.dart';
 import 'core/presets.dart';
+import 'window.dart';
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +32,7 @@ class Aestesis {
   final discord = 'https://discord.gg/fnWEmvU6qY';
   final bluesky = 'https://bsky.app/profile/aestesis.bsky.social';
   final alib = AestesisEngine();
+  late final Window window;
   late final message = alib.message;
   late final SharedPreferences prefs;
   late final PackageInfo package;
@@ -317,22 +320,58 @@ class Aestesis {
   Future<void> windowSetup() async {
     if (Platform.isMacOS) {
       final bounds = this['windowBounds'];
+      final windowBounds = bounds != null ? RectExt.fromJson(bounds) : null;
       const minWindowSize = Size(900, 600);
-      final windowSize = bounds != null
-          ? RectExt.fromJson(bounds).size
-          : minWindowSize;
-      await windowManager.ensureInitialized();
-      WindowOptions windowOptions = WindowOptions(
-        size: windowSize,
-        minimumSize: minWindowSize,
-        //center: true,
-        backgroundColor: Colors.transparent,
-        skipTaskbar: false,
-        titleBarStyle: TitleBarStyle.hidden,
-      );
-      windowManager.waitUntilReadyToShow(windowOptions, () async {
-        await windowManager.show();
-        await windowManager.focus();
+      final windowSize = windowBounds?.size ?? minWindowSize;
+      window = WindowManager.instance.getCurrent()!;
+      window.minimumSize = minWindowSize.toNative();
+      window.backgroundColor = Colors.transparent.toNative();
+      window.titleBarStyle = .hidden;
+      window.isMinimizable = true;
+      window.isFullScreenable = true;
+      window.setSize(windowSize.toNative(), false);
+      if (windowBounds != null) {
+        window.position = windowBounds.topLeft.toNative();
+      } else {
+        window.center();
+      }
+      window.show();
+      window.focus();
+      void update() {
+        final r = window.bounds.toRect();
+        aes['windowBounds'] = r.toJson();
+      }
+
+      window.addListener((we) {
+        bus.fire(we);
+        switch (we) {
+          case WindowClosedEvent():
+            SystemNavigator.pop();
+            break;
+          case WindowBlurredEvent():
+            aes.bus.fire(const WindowBlurEvent());
+            break;
+          case WindowMovedEvent():
+            update();
+            break;
+          case WindowResizedEvent():
+            update();
+            aes.bus.fire(const WindowBlurEvent());
+            break;
+          case WindowCreatedEvent():
+          case WindowFocusedEvent():
+          case WindowMinimizedEvent():
+          case WindowMaximizedEvent():
+          case WindowRestoredEvent():
+          case WindowEnteredFullScreenEvent():
+          case WindowExitedFullScreenEvent():
+          case WindowCloseRequestedEvent():
+          case WindowPropertyChangedEvent():
+          case WindowOcclusionChangedEvent():
+          case WindowDockedEvent():
+          case WindowUndockedEvent():
+            break;
+        }
       });
     }
   }

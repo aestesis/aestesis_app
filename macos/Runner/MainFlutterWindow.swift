@@ -5,9 +5,9 @@ import aestesis_alib
 class MainFlutterWindow: NSWindow {
     override func awakeFromNib() {
         let flutterViewController = FlutterViewController()
-        let windowFrame = self.frame
+        let windowFrame = NSRect(x: 0, y: 0, width: 0, height: 0)
         self.contentViewController = flutterViewController
-        self.setFrame(windowFrame, display: true)
+        self.setFrame(windowFrame, display: false)
         
         RegisterGeneratedPlugins(registry: flutterViewController)
         if let del =  NSApplication.shared.delegate as? AppDelegate {
