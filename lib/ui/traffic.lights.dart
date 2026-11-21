@@ -1,5 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:window_manager/window_manager.dart';
@@ -116,8 +118,38 @@ class TrafficLight extends StatefulWidget {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class _TrafficLightState extends State<TrafficLight> {
+class _TrafficLightState extends State<TrafficLight>
+    with TickerProviderStateMixin {
   bool pressed = false;
+  List<OpaWidget> children = [];
+  Ticker? ticker;
+  void tickStart() {
+    ticker?.stop();
+    ticker = createTicker((_) {
+      if (children.isNotEmpty) {
+        if (children.last.opacity < 1) {
+          children.last.opacity = 0.1 + children.last.opacity * 0.9;
+          if (children.last.opacity > 0.99) {
+            children.last.opacity = 1;
+          }
+          setState(() {});
+        } else if (children.length > 1) {
+          children = [children.last];
+          setState(() {});
+          ticker?.stop();
+          ticker = null;
+        }
+      }
+    });
+    ticker?.start();
+  }
+
+  @override
+  void dispose() {
+    ticker?.stop();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final a = widget.enabled
@@ -125,7 +157,11 @@ class _TrafficLightState extends State<TrafficLight> {
               ? (pressed ? widget.press : widget.hover)
               : widget.normal)
         : 'window.blur';
-    String asset = 'assets/svg/ui/$a.svg';
+    final asset = 'assets/svg/ui/$a.svg';
+    if (children.isEmpty || children.last.asset != asset) {
+      children.add(OpaWidget(key: UniqueKey(), asset: asset));
+      tickStart();
+    }
     return GestureDetector(
       onTapDown: (_) {
         pressed = true;
@@ -140,12 +176,22 @@ class _TrafficLightState extends State<TrafficLight> {
         setState(() {});
       },
       onTap: widget.onPress,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 400),
-        child: SvgPicture.asset(asset, width: 12),
-      ),
+      child: Stack(children: [...children.map((c) => c.computed)]),
     );
   }
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+class OpaWidget {
+  Key key;
+  String asset;
+  double opacity;
+  OpaWidget({required this.key, required this.asset, this.opacity = 0});
+  Widget get computed => Opacity(
+    opacity: opacity,
+    child: SvgPicture.asset(key: key, asset, width: 14),
+  );
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
