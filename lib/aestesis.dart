@@ -358,18 +358,7 @@ class Aestesis {
             update();
             aes.bus.fire(const WindowBlurEvent());
             break;
-          case WindowCreatedEvent():
-          case WindowFocusedEvent():
-          case WindowMinimizedEvent():
-          case WindowMaximizedEvent():
-          case WindowRestoredEvent():
-          case WindowEnteredFullScreenEvent():
-          case WindowExitedFullScreenEvent():
-          case WindowCloseRequestedEvent():
-          case WindowPropertyChangedEvent():
-          case WindowOcclusionChangedEvent():
-          case WindowDockedEvent():
-          case WindowUndockedEvent():
+          default:
             break;
         }
       });
